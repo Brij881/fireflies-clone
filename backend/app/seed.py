@@ -121,15 +121,21 @@ def seed_database():
         topics = [
             Topic(
                 meeting_id=meeting.id,
-                name="Analytics Dashboard",
+                title="Analytics Dashboard",
+                start_time=14,
+                description="Progress and feature completion of the analytics dashboard.",
             ),
             Topic(
                 meeting_id=meeting.id,
-                name="Performance Testing",
+                title="Performance Testing",
+                start_time=31,
+                description="API integration, load testing, and remaining performance issues.",
             ),
             Topic(
                 meeting_id=meeting.id,
-                name="Launch Timeline",
+                title="Launch Timeline",
+                start_time=49,
+                description="Final QA, release preparation, and the Friday deployment target.",
             ),
         ]
 
