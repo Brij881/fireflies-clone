@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.database import Base, engine
 from app.routers import action_items, meetings, topics, transcripts
 import os
-
+from app.seed import seed_database
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,7 +15,7 @@ frontend_url = os.getenv(
 )
 
 Base.metadata.create_all(bind=engine)
-
+seed_database()
 app = FastAPI(
     title="Fireflies Clone API",
     version="1.0.0",
