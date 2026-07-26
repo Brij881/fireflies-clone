@@ -2,72 +2,230 @@
 
 A full-stack meeting intelligence application inspired by Fireflies.ai.
 
-The application allows users to manage meetings, review transcripts, search conversations, navigate transcript timestamps, manage action items, and review meeting summaries and topics.
+The application provides a central workspace for managing meetings, reviewing summaries, exploring speaker-attributed transcripts, tracking action items, and navigating meeting topics.
 
-## Features
+It is built with **Next.js + TypeScript** on the frontend and **FastAPI + SQLAlchemy** on the backend, with **PostgreSQL** providing persistent production storage.
 
-### Meeting Library
+---
 
-- View all meetings
-- Search by meeting title, summary, or participant
-- Filter by participant
-- Sort by most recent, oldest, or title
-- Create new meetings
-- Edit meeting metadata
-- Delete meetings
+## Live Demo
 
-### Meeting Intelligence
+**Frontend**
 
-Each meeting contains:
+https://fireflies-clone-mu.vercel.app
 
-- Meeting summary
-- Participants
-- Topics discussed
-- Action items
-- Speaker-attributed transcript
-- Transcript timestamps
+**Backend API**
+
+(https://fireflies-clone-wkk2.onrender.com/)
+
+**Interactive API Documentation**
+
+(https://fireflies-clone-wkk2.onrender.com/)/docs
+
+**GitHub Repository**
+
+(https://github.com/Brij881/fireflies-clone/)
+
+> The application is hosted using free-tier infrastructure. The backend may take a short time to wake up after a period of inactivity.
+
+---
+
+## Screenshots
+
+### Meeting Dashboard
+
+The dashboard provides a searchable and filterable overview of meetings, including meeting summaries, dates, durations, participants, and processing status.
+
+![Meeting Dashboard](docs/dashboard.png)
+
+### Meeting Workspace
+
+Each meeting has a dedicated workspace containing its summary, topics, participants, action items, and transcript.
+
+![Meeting Workspace](docs/meeting-detail.png)
 
 ### Interactive Transcript
 
-- Search within transcripts
-- Highlight matching text
-- Click transcript segments to seek playback
-- Automatically highlight the active transcript segment
-- Playback controls
-- Playback speed control
-- Timeline seeking
+Transcripts are divided into speaker-attributed, timestamped segments and support searching and playback synchronisation.
 
-### Action Items
+![Interactive Transcript](docs/transcript.png)
+
+---
+
+## Features
+
+### Meeting Dashboard
+
+The main dashboard provides an overview of all available meetings.
 
 Users can:
 
-- Add action items
+- View all meetings
+- Search meetings by title
+- Search meeting summaries
+- Search by participant name
+- Filter meetings by participant
+- Sort meetings by most recent
+- Sort meetings by oldest
+- Sort meetings alphabetically
+- View meeting duration
+- View participant count
+- Create new meetings
+- Edit existing meetings
+- Delete meetings
+
+Search and participant filters can be combined to narrow results further.
+
+---
+
+### Meeting Workspace
+
+Each meeting has a dedicated workspace containing structured meeting information.
+
+The workspace includes:
+
+- Meeting title
+- Meeting date
+- Duration
+- Participants
+- Meeting summary
+- Topics discussed
+- Action items
+- Speaker-attributed transcript
+
+---
+
+### Interactive Transcript
+
+Meeting transcripts are stored as individual timestamped segments.
+
+Each transcript segment contains:
+
+- Speaker
+- Start time
+- End time
+- Transcript text
+- Segment order
+
+The transcript interface supports:
+
+- Speaker attribution
+- Timestamp navigation
+- Transcript searching
+- Search-result highlighting
+- Active-segment highlighting
+- Clicking a segment to seek playback
+- Synchronisation between playback time and transcript position
+
+---
+
+### Playback Controls
+
+The meeting workspace contains a simulated playback system based on transcript timing.
+
+Users can:
+
+- Play and pause
+- Seek through the meeting timeline
+- Click transcript timestamps to change playback position
+- Change playback speed
+- Follow the currently active transcript segment
+
+The shared playback state enables bidirectional interaction:
+
+```text
+Transcript click
+      │
+      ▼
+Update playback position
+      │
+      ▼
+Highlight active transcript segment
+```
+
+---
+
+### Action Items
+
+Action items can be managed directly from a meeting.
+
+Users can:
+
+- Create action items
+- Assign action items
 - Edit action items
-- Mark items complete/incomplete
+- Mark items complete
+- Mark items incomplete
 - Delete action items
 
-All changes are persisted in the database.
+Changes are persisted through the FastAPI backend and PostgreSQL database.
+
+---
+
+### Meeting Creation
+
+Users can create meetings directly from the dashboard.
+
+Meeting information can include:
+
+- Title
+- Date
+- Duration
+- Participants
+- Summary
+- Transcript
+
+---
 
 ### Transcript Import
 
-Meetings can be created by:
+Transcripts can be added by:
 
 - Pasting transcript text
-- Uploading `.txt` transcript files
+- Uploading a `.txt` file
 
-Supported transcript formats include:
+The parser supports speaker-attributed transcripts such as:
 
 ```text
 Alex: Thanks everyone for joining.
 Sarah: Let's review the launch timeline.
+David: The API integration is complete.
 ```
 
-and timestamped transcripts:
+Timestamped transcripts are also supported:
 
 ```text
 [00:00] Alex: Thanks everyone for joining.
-[00:12] Sarah: Let's review the launch timeline.
+[00:14] Sarah: Let's review the launch timeline.
+[00:31] David: The API integration is complete.
 ```
+
+Parsed transcript entries are converted into structured transcript segments before being stored by the backend.
+
+---
+
+## Demo Data
+
+The deployed application contains sample meetings covering different types of team discussions.
+
+Examples include:
+
+- Weekly Product Sync
+- Q3 Marketing Strategy
+- Engineering Architecture Review
+- Customer Success Review
+
+The demo meetings contain realistic:
+
+- Participants
+- Summaries
+- Transcript segments
+- Topics
+- Action items
+
+This allows search, filtering, sorting, transcript navigation, and action-item functionality to be tested immediately.
+
+---
 
 ## Tech Stack
 
@@ -81,159 +239,192 @@ and timestamped transcripts:
 
 ### Backend
 
+- Python
 - FastAPI
 - SQLAlchemy
-- SQLite
 - Pydantic
 - Uvicorn
+
+### Database
+
+**Production**
+
+- PostgreSQL
+
+**Local development**
+
+- SQLite fallback
+
+### Deployment
+
+- Vercel — Next.js frontend
+- Render — FastAPI backend
+- Render PostgreSQL — persistent production database
+
+---
 
 ## Architecture
 
 ```text
-┌─────────────────────────────┐
-│        Next.js UI           │
-│                             │
-│ Dashboard / Meeting Detail  │
-│ Transcript / Action Items   │
-└──────────────┬──────────────┘
-               │
-               │ REST API
-               ▼
-┌─────────────────────────────┐
-│          FastAPI            │
-│                             │
-│ Meetings                    │
-│ Transcripts                 │
-│ Topics                      │
-│ Action Items                │
-└──────────────┬──────────────┘
-               │
-               │ SQLAlchemy
-               ▼
-┌─────────────────────────────┐
-│           SQLite            │
-└─────────────────────────────┘
+┌─────────────────────────────────┐
+│                                 │
+│        Next.js Frontend         │
+│             Vercel              │
+│                                 │
+│  Dashboard / Meeting Workspace  │
+│  Search / Filters / Transcript  │
+│        Action Item UI           │
+│                                 │
+└────────────────┬────────────────┘
+                 │
+                 │ HTTPS / REST API
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│                                 │
+│         FastAPI Backend         │
+│             Render              │
+│                                 │
+│  Meetings / Participants        │
+│  Transcripts / Topics           │
+│  Action Items                   │
+│                                 │
+└────────────────┬────────────────┘
+                 │
+                 │ SQLAlchemy
+                 │
+                 ▼
+┌─────────────────────────────────┐
+│                                 │
+│       PostgreSQL Database       │
+│             Render              │
+│                                 │
+│       Persistent Storage        │
+│                                 │
+└─────────────────────────────────┘
 ```
+
+The frontend and backend are deployed independently and communicate through a REST API.
+
+---
 
 ## Project Structure
 
 ```text
 fireflies-clone/
+│
 ├── backend/
 │   ├── app/
+│   │   ├── models/
 │   │   ├── routers/
 │   │   ├── database.py
 │   │   ├── main.py
-│   │   ├── models.py
-│   │   └── schemas.py
+│   │   ├── schemas.py
+│   │   └── seed.py
+│   │
+│   ├── .env.example
 │   └── requirements.txt
 │
 ├── frontend/
 │   ├── public/
+│   │
 │   ├── src/
 │   │   ├── app/
+│   │   │   ├── meetings/
+│   │   │   ├── error.tsx
+│   │   │   ├── loading.tsx
+│   │   │   └── page.tsx
+│   │   │
 │   │   ├── components/
 │   │   │   ├── layout/
 │   │   │   ├── meetings/
 │   │   │   └── meeting-detail/
+│   │   │
 │   │   └── lib/
+│   │       ├── api.ts
+│   │       └── types.ts
+│   │
+│   ├── .env.example
 │   └── package.json
 │
+├── docs/
+│   ├── dashboard.png
+│   ├── meeting-detail.png
+│   └── transcript.png
+│
+├── .gitignore
 └── README.md
 ```
 
-## Running Locally
+---
 
-### 1. Clone the repository
+## Data Model
 
-```bash
-git clone <repository-url>
-cd fireflies-clone
-```
+The application is structured around five primary entities.
 
-### 2. Backend
+### Meeting
 
-Navigate to the backend:
+Stores the main meeting metadata:
 
-```bash
-cd backend
-```
+- Title
+- Date
+- Duration
+- Summary
 
-Create a Python virtual environment:
+A meeting acts as the parent entity for the remaining meeting information.
 
-```bash
-python -m venv venv
-```
+### Participant
 
-Activate it on Windows:
+Represents people who attended a meeting.
 
-```bash
-venv\Scripts\activate
-```
+Participant information includes:
 
-Install dependencies:
+- Name
+- Email
+- Associated meeting
 
-```bash
-pip install -r requirements.txt
-```
+### TranscriptSegment
 
-Create `.env`:
+Represents an individual section of a transcript.
 
-```text
-FRONTEND_URL=http://localhost:3000
-```
+Each segment contains:
 
-Start FastAPI:
+- Speaker
+- Start time
+- End time
+- Text
+- Segment order
+- Associated meeting
 
-```bash
-uvicorn app.main:app --reload
-```
+Storing transcripts as segments rather than a single text block makes searching, speaker attribution, and playback synchronisation easier.
 
-The API runs at:
+### Topic
 
-```text
-http://127.0.0.1:8000
-```
+Represents a topic discussed during a meeting.
 
-FastAPI documentation is available at:
+Each topic contains:
 
-```text
-http://127.0.0.1:8000/docs
-```
+- Title
+- Start time
+- Description
+- Associated meeting
 
-### 3. Frontend
+### ActionItem
 
-Open another terminal:
+Represents a task identified during a meeting.
 
-```bash
-cd frontend
-```
+Each action item contains:
 
-Install dependencies:
+- Description
+- Assignee
+- Completion state
+- Associated meeting
 
-```bash
-npm install
-```
+---
 
-Create `.env.local`:
+## REST API
 
-```text
-NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
-```
-
-Start Next.js:
-
-```bash
-npm run dev
-```
-
-Open:
-
-```text
-http://localhost:3000
-```
-
-## API
+The frontend communicates with the FastAPI backend through REST endpoints.
 
 ### Meetings
 
@@ -245,11 +436,11 @@ PATCH   /api/meetings/{id}
 DELETE  /api/meetings/{id}
 ```
 
-### Transcript
+### Transcripts
 
 ```text
-GET   /api/meetings/{id}/transcript
-POST  /api/meetings/{id}/transcript
+GET     /api/meetings/{id}/transcript
+POST    /api/meetings/{id}/transcript
 ```
 
 ### Action Items
@@ -264,91 +455,477 @@ DELETE  /api/action-items/{id}
 ### Topics
 
 ```text
-GET /api/meetings/{id}/topics
+GET     /api/meetings/{id}/topics
 ```
 
-## Data Model
-
-The primary entities are:
-
-- Meeting
-- Participant
-- TranscriptSegment
-- ActionItem
-- Topic
-
-Relationships are persisted using SQLAlchemy and SQLite.
-
-## Design Decisions
-
-### Separate Frontend and Backend
-
-Next.js and FastAPI are kept as independent applications. This provides a clear separation between presentation and business/data logic.
-
-### Shared Playback State
-
-The meeting workspace maintains a shared playback time between the simulated media player and transcript.
-
-This allows:
+Interactive API documentation is automatically generated by FastAPI and is available at:
 
 ```text
-Transcript click → seek player
-Player time → highlight transcript
+YOUR_RENDER_BACKEND_URL/docs
 ```
 
-### Transcript Representation
+---
 
-Transcripts are stored as individual segments rather than one large text field.
+# Running Locally
 
-Each segment contains:
+## Prerequisites
 
-- Speaker
-- Start time
-- End time
-- Text
-- Segment order
+Make sure the following are installed:
 
-This makes transcript searching, speaker attribution, and playback synchronisation straightforward.
+- Node.js
+- npm
+- Python 3
+- pip
+- Git
 
-### Persistence
+---
 
-SQLite was selected because the application is designed as a self-contained technical assignment and does not require external database infrastructure.
+## 1. Clone the Repository
 
-## Limitations
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd fireflies-clone
+```
 
-- The media player currently simulates playback rather than processing uploaded meeting audio/video.
-- Transcript upload currently supports plain-text files.
-- AI-generated summaries are represented by persisted meeting summary data rather than an external LLM service.
-- Authentication and multi-user workspaces are outside the current scope.
+---
 
-## Future Improvements
+## 2. Backend Setup
 
-Potential improvements include:
+Navigate to the backend:
 
-- Real audio/video upload and playback
-- Automatic speech-to-text transcription
-- AI-generated summaries
-- Automatic action-item extraction
-- Global transcript search
-- Authentication
-- Team workspaces
-- Meeting sharing
-- Export to PDF/Markdown
-- Calendar integrations
+```bash
+cd backend
+```
+
+Create a virtual environment:
+
+```bash
+python -m venv venv
+```
+
+### Windows
+
+Activate it using:
+
+```bash
+venv\Scripts\activate
+```
+
+### macOS / Linux
+
+```bash
+source venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## 3. Backend Environment
+
+Create:
+
+```text
+backend/.env
+```
+
+Add:
+
+```env
+FRONTEND_URL=http://localhost:3000
+```
+
+`DATABASE_URL` is optional during local development.
+
+If it is not provided, the backend automatically falls back to:
+
+```text
+sqlite:///./fireflies.db
+```
+
+This means PostgreSQL is not required to run the application locally.
+
+---
+
+## 4. Start the Backend
+
+From the `backend` directory:
+
+```bash
+uvicorn app.main:app --reload
+```
+
+The backend will run at:
+
+```text
+http://127.0.0.1:8000
+```
+
+Health check:
+
+```text
+http://127.0.0.1:8000/health
+```
+
+API documentation:
+
+```text
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## 5. Frontend Setup
+
+Open another terminal and navigate to:
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create:
+
+```text
+frontend/.env.local
+```
+
+Add:
+
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+```
+
+---
+
+## 6. Start the Frontend
+
+Run:
+
+```bash
+npm run dev
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+The local architecture is then:
+
+```text
+localhost:3000
+      │
+      ▼
+Next.js
+      │
+      ▼
+localhost:8000
+      │
+      ▼
+FastAPI
+      │
+      ▼
+SQLite
+```
+
+---
 
 ## Production Build
 
-Frontend:
+Before deploying the frontend, verify that the production build succeeds:
 
 ```bash
 cd frontend
 npm run build
+```
+
+Run the production frontend locally with:
+
+```bash
 npm run start
 ```
 
-Backend:
+For the backend:
 
 ```bash
 cd backend
 uvicorn app.main:app
 ```
+
+---
+
+## Environment Variables
+
+### Frontend
+
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+```
+
+In production this points to the deployed Render backend.
+
+### Backend
+
+```env
+FRONTEND_URL=http://localhost:3000
+```
+
+In production this points to the deployed Vercel frontend.
+
+Production also uses:
+
+```env
+DATABASE_URL=<postgresql-connection-string>
+```
+
+`DATABASE_URL` should never be committed to source control.
+
+---
+
+## Database Configuration
+
+The database layer automatically selects the appropriate database based on the environment.
+
+```text
+DATABASE_URL available?
+        │
+    ┌───┴───┐
+    │       │
+   Yes      No
+    │       │
+    ▼       ▼
+PostgreSQL SQLite
+Production  Local
+```
+
+This keeps local setup simple while providing persistent production storage.
+
+---
+
+## Demo Database Seeding
+
+The application includes an idempotent seed process for demo data.
+
+During backend startup, existing seeded meetings are detected before insertion.
+
+This means redeploying the backend does not continually duplicate demo meetings.
+
+The seed process allows the deployed application to provide useful example data immediately while preserving user-created meetings in PostgreSQL.
+
+---
+
+## Error Handling
+
+The application includes dedicated loading and error states.
+
+### Invalid Meeting
+
+Requests for meetings that do not exist display a dedicated **Meeting not found** page.
+
+### Backend Failure
+
+Backend/API failures are handled separately from `404` responses so infrastructure failures are not incorrectly displayed as missing meetings.
+
+### API Errors
+
+The frontend API client converts non-successful HTTP responses into structured errors containing the HTTP status code.
+
+---
+
+## Design Decisions
+
+### Separate Frontend and Backend
+
+Next.js and FastAPI are maintained as independent applications.
+
+This creates a clear separation between:
+
+- Presentation logic
+- Client-side interaction
+- API/business logic
+- Persistence
+
+It also allows the frontend and backend to be deployed independently.
+
+---
+
+### Server-Side Initial Data Fetching
+
+The meeting dashboard retrieves its initial data through the Next.js application.
+
+Interactive operations such as meeting creation and action-item updates communicate with the FastAPI API.
+
+---
+
+### Client-Side Search and Filtering
+
+Once meetings are loaded, dashboard searching, participant filtering, and sorting happen client-side.
+
+This provides immediate interaction without making a new API request for every search query.
+
+Search currently covers:
+
+- Meeting titles
+- Meeting summaries
+- Participant names
+
+---
+
+### Structured Transcripts
+
+Rather than storing an entire transcript as one large text field, transcripts are represented as ordered segments.
+
+This makes it possible to support:
+
+- Speaker attribution
+- Timestamp navigation
+- Search
+- Active-segment highlighting
+- Playback synchronisation
+
+---
+
+### Shared Playback State
+
+The meeting workspace shares playback position between the transcript and player.
+
+This enables:
+
+```text
+Player time changes
+       │
+       ▼
+Transcript highlights active segment
+```
+
+and:
+
+```text
+Transcript segment clicked
+       │
+       ▼
+Player seeks to timestamp
+```
+
+---
+
+### PostgreSQL for Production
+
+The initial implementation used SQLite.
+
+SQLite is suitable for local development but a standard Render web service uses an ephemeral filesystem. A database file stored there may disappear after a service redeployment.
+
+The production application therefore uses PostgreSQL.
+
+SQLite remains available as the zero-configuration local-development fallback.
+
+---
+
+## Deployment
+
+### Frontend
+
+The Next.js frontend is deployed on Vercel.
+
+Production environment:
+
+```env
+NEXT_PUBLIC_API_URL=YOUR_RENDER_BACKEND_URL
+```
+
+### Backend
+
+The FastAPI API is deployed on Render.
+
+Production environment variables include:
+
+```env
+FRONTEND_URL=https://fireflies-clone-mu.vercel.app
+DATABASE_URL=<Render PostgreSQL internal URL>
+```
+
+### Database
+
+Production data is persisted in PostgreSQL rather than the web service filesystem.
+
+This ensures meetings and action-item changes survive backend restarts and redeployments.
+
+---
+
+## Limitations
+
+- Playback is simulated using transcript timing rather than actual uploaded meeting audio/video.
+- Transcript import currently supports plain-text transcripts.
+- Meeting summaries and topics are stored as structured meeting data rather than generated dynamically through an external LLM.
+- Automatic speech-to-text transcription is outside the current scope.
+- Authentication is not currently implemented.
+- Multi-user organisations and workspaces are outside the current scope.
+- Free-tier hosting may introduce backend cold-start latency.
+
+---
+
+## Future Improvements
+
+Potential extensions include:
+
+- Real audio and video upload
+- Audio/video playback
+- Automatic speech-to-text transcription
+- AI-generated meeting summaries
+- Automatic topic extraction
+- Automatic action-item detection
+- Speaker identification
+- Authentication
+- Team workspaces
+- Role-based permissions
+- Meeting sharing
+- Global transcript search
+- Calendar integrations
+- Slack integration
+- Meeting exports
+- PDF/Markdown exports
+- Email notifications
+- Advanced meeting analytics
+
+---
+
+## Production Verification
+
+The deployed application has been tested for:
+
+- Meeting retrieval
+- Meeting creation
+- Meeting editing
+- Meeting deletion
+- PostgreSQL persistence
+- Search
+- Participant filtering
+- Meeting sorting
+- Transcript rendering
+- Transcript searching
+- Timestamp navigation
+- Playback controls
+- Action-item creation
+- Action-item editing
+- Action-item completion
+- Action-item deletion
+- Error handling
+- Production frontend build
+- CORS between Vercel and Render
+
+---
+
+## License
+
+This project was developed as a technical project/assignment for educational and demonstration purposes.
